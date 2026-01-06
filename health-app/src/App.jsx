@@ -12,10 +12,10 @@ export default function App() {
     setResult(null);
     
     try {
-      const response = await fetch('https://vsp312007.app.n8n.cloud/webhook/e9d69f35-50f5-4330-bc1c-7565556df6cf/chat', {
+      const response = await fetch('https://vsp312007.app.n8n.cloud/webhook/analyze-ingredient', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chatInput: inputData })
+        body: JSON.stringify({ ingredient: inputData })
       });
 
       if (!response.ok) {
