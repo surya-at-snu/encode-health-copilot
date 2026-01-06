@@ -7,46 +7,35 @@ export default function App() {
   const [inputData, setInputData] = useState("");
 
   const handleScan = async () => {
-    if (!inputData) return alert("Please enter ingredients first!");
-    setLoading(true);
-    setResult(null);
-    
-    try {
-      const response = await fetch('https://vsp312007.app.n8n.cloud/webhook/analyze-ingredient', {
+  if (!inputData) return alert("Please enter ingredients first!");
+  setLoading(true);
+  setResult(null);
+
+  try {
+    const response = await fetch(
+      'https://vsp312007.app.n8n.cloud/webhook/analyze-ingredient',
+      {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ingredient: inputData })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        body: JSON.stringify({ ingredient: inputData }),
       }
+    );
 
-      const data = await response.json();
-      
-      // Log to see what n8n is returning
-      console.log("n8n response:", data);
-      
-      // Handle the response - n8n should return the AI output directly
-      if (data.main_insight || data.output) {
-        setResult(data.output || data);
-      } else if (typeof data === 'string') {
-        // If it's a string, parse it as JSON
-        try {
-          setResult(JSON.parse(data));
-        } catch {
-          alert("Unexpected response format from n8n");
-        }
-      } else {
-        setResult(data);
-      }
-    } catch (err) {
-      console.error("Error:", err);
-      alert("Failed to connect to n8n. Check webhook URL and ensure workflow is published!");
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+
+    const data = await response.json();
+    console.log("n8n response:", data);
+    setResult(data);
+
+  } catch (err) {
+    console.error("Error:", err);
+    alert("Failed to connect to AI service.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className={`min-h-screen p-6 font-sans flex flex-col items-center transition-colors duration-500 ${result?.theme === 'danger' ? 'bg-red-50' : 'bg-slate-50'}`}>
