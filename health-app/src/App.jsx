@@ -11,7 +11,7 @@ export default function App() {
     setLoading(true);
     try {
       // Connecting to your specific Production Webhook
-      const response = await fetch('https://vsp312007.app.n8n.cloud/webhook/49de5a56-8d7a-450a-a1be-4f294ef39880', {
+      const response = await fetch('https://vsp312007.app.n8n.cloud/webhook/e9d69f35-50f5-4330-bc1c-7565556df6cf/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chatInput: inputData })
