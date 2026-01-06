@@ -3,7 +3,11 @@
   "nodes": [
     {
       "parameters": {
-        "options": {}
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Surya. How can I assist you today?",
+        "options": {
+          "responseMode": "responseNodes"
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.4,
@@ -57,17 +61,18 @@
     },
     {
       "parameters": {
-        "respondWith": "allIncomingItems",
+        "message": "={\n  \"insight\": \"{{ $node[\"AI Agent\"].json[\"output\"] }}\",\n  \"reasoning\": \"{{ $node[\"AI Agent\"].json[\"reasoning\"] }}\",\n  \"uncertainty\": \"{{ $node[\"AI Agent\"].json[\"Honest Note\"] }}\"\n}",
+        "waitUserReply": false,
         "options": {}
       },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.5,
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
       "position": [
-        496,
-        -16
+        320,
+        -112
       ],
-      "id": "80234ec6-8bfb-41fa-8b57-e83ed87e3ba2",
-      "name": "Respond to Webhook"
+      "id": "73dc8e6d-da9f-4dad-b2f2-91fd17eb1ff9",
+      "name": "Respond to Chat"
     }
   ],
   "pinData": {},
@@ -98,7 +103,7 @@
       "main": [
         [
           {
-            "node": "Respond to Webhook",
+            "node": "Respond to Chat",
             "type": "main",
             "index": 0
           }
@@ -111,7 +116,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "ff74448b-11fe-46d0-9704-dfe9fdf9a32d",
+  "versionId": "3e644603-6053-48eb-b1a6-b65c20307e60",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "c0462b656177259d7eda67325d2341c855a4a25df79333661ca3534c8250adad"
