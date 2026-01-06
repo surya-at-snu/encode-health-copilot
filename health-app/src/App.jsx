@@ -27,7 +27,21 @@ export default function App() {
 
     const data = await response.json();
     console.log("n8n response:", data);
-    setResult(data);
+   
+    let parsed = data;
+
+// If backend wrapped JSON inside `output`
+if (data?.output && typeof data.output === "string") {
+  parsed = JSON.parse(data.output);
+}
+
+// If backend returned raw JSON as string
+if (typeof data === "string") {
+  parsed = JSON.parse(data);
+}
+
+setResult(parsed);
+
 
   } catch (err) {
     console.error("Error:", err);
