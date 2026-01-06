@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Camera, AlertTriangle, ShieldCheck, BrainCircuit, Info } from 'lucide-react';
 
 export default function App() {
@@ -10,18 +10,63 @@ export default function App() {
     if (!inputData) return alert("Please enter ingredients first!");
     setLoading(true);
     try {
-      // Connecting to your specific Production Webhook
+      // Step 1: Start the execution
       const response = await fetch('https://vsp312007.app.n8n.cloud/webhook/e9d69f35-50f5-4330-bc1c-7565556df6cf/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chatInput: inputData })
       });
       const data = await response.json();
-      setResult(data.output || data); 
+
+      // Step 2: If it started, poll for results
+      if (data.executionId) {
+        pollForResults(data.executionId);
+      } else if (data.output) {
+        // If results came back immediately, use them
+        setResult(data.output || data);
+        setLoading(false);
+      }
     } catch (err) {
       alert("Failed to connect to the AI Brain. Ensure your n8n workflow is Published!");
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const pollForResults = (executionId) => {
+    const maxAttempts = 30; // Try for 30 seconds (1 sec intervals)
+    let attempts = 0;
+
+    const interval = setInterval(async () => {
+      attempts++;
+      try {
+        // Fetch execution result from n8n
+        const resultResponse = await fetch(
+          `https://vsp312007.app.n8n.cloud/webhook/e9d69f35-50f5-4330-bc1c-7565556df6cf/results?executionId=${executionId}`,
+          {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+        const resultData = await resultResponse.json();
+
+        // Check if results are ready
+        if (resultData.main_insight || resultData.output) {
+          setResult(resultData.output || resultData);
+          clearInterval(interval);
+          setLoading(false);
+        } else if (attempts >= maxAttempts) {
+          alert("Request timed out. Please try again.");
+          clearInterval(interval);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (attempts >= maxAttempts) {
+          alert("Failed to fetch results.");
+          clearInterval(interval);
+          setLoading(false);
+        }
+      }
+    }, 1000); // Poll every 1 second
   };
 
   return (
