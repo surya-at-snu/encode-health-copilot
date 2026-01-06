@@ -1,0 +1,121 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "14ba4cc9-a143-43a1-8ebc-418cd48a7628",
+      "name": "When chat message received",
+      "webhookId": "e9d69f35-50f5-4330-bc1c-7565556df6cf"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an AI-Native Health Co-pilot. Your goal is to reduce cognitive load. When you receive ingredient names, do not just list them. Reason about why they matter (e.g., 'This causes energy crashes'). Communicate uncertainty honestly. Output your response as a JSON object with keys: 'main_insight', 'reasoning', 'uncertainty', and 'theme'"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "93d1a64c-cd94-4e28-a79b-3b350bcfc734",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "9e63fc95-8deb-42ed-96f9-1e49b2b84ade",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QnOcIuo1ZDJgzHD0",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        496,
+        -16
+      ],
+      "id": "80234ec6-8bfb-41fa-8b57-e83ed87e3ba2",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "ff74448b-11fe-46d0-9704-dfe9fdf9a32d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c0462b656177259d7eda67325d2341c855a4a25df79333661ca3534c8250adad"
+  },
+  "id": "Bq-zTxGfR8PI0aLhPxq2j",
+  "tags": []
+}
